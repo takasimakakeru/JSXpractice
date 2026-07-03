@@ -4,7 +4,8 @@ import styles from "./TimerApp.module.css";
 // ★ここに学校の時間を記述する★
 const schedules = {
   A: [
-    { name: "1時間目休み", time: "09:55" },
+    { name: "1時間目休み", time: "09:45" },
+
     { name: "昼休み", time: "12:45" },
     { name: "放課後", time: "15:35" },
   ],
