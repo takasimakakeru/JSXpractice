@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   // 1. 変数（State）を準備する場所
-  const [alarmList, setAlarmList] = useState(["09:30:00","10:30:00", "11:30:00", "13:30:00", "14:30:00", "15:30:00"]);
+  const [alarmList, setAlarmList] = useState(["09:30:00","10:30:00", "11:30:00", "13:00:00", "14:30:00", "15:30:00"]);
   const [currentTime, setCurrentTime] = useState(""); // ★これ！
 
   // 2. 裏で動く処理（Effect）の場所
@@ -13,7 +13,7 @@ function App() {
 
       setCurrentTime(timeString); // ★コメントを外して本物にする！
 
-      if () {
+      if (alarmList.includes(timeString)) {
         alert("定刻になりました！");
       }
 
