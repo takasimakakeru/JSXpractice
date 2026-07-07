@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 function App() {
   // 1. 変数（State）を準備する場所
   const [alarmList, setAlarmList] = useState(["09:30:00","10:30:00", "11:30:00", "13:30:00", "14:30:00", "15:30:00"]);
@@ -11,6 +13,10 @@ function App() {
 
       setCurrentTime(timeString); // ★コメントを外して本物にする！
 
+      if () {
+        alert("定刻になりました！");
+      }
+
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -23,3 +29,5 @@ function App() {
     </div>
   );
 }
+
+export default App;
