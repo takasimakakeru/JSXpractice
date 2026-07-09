@@ -1,57 +1,110 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-// 疑似的なJSONファイルへの書き込み・読み込みをシミュレートする関数
-const loadTodosFromJSON = () => {
-  const data = localStorage.getItem("todos_json_mock");
-  return data ? JSON.parse(data) : [];
+// 初期データ（初回起動時のみ使用）
+const INITIAL_DATABASE = {
+  auth: { username: "admin", password: "password" },
+  todos: [
+    { id: 1, text: "最初の共通タスク", completed: false }
+  ]
 };
 
-const saveTodosToJSON = (todos) => {
-  localStorage.setItem("todos_json_mock", JSON.stringify(todos));
+// JSON（localStorage）から全データを取得
+const loadDatabaseFromJSON = () => {
+  const data = localStorage.getItem("secure_todo_database_json");
+  if (!data) {
+    localStorage.setItem("secure_todo_database_json", JSON.stringify(INITIAL_DATABASE));
+    return INITIAL_DATABASE;
+  }
+  return JSON.parse(data);
+};
+
+// JSON（localStorage）へ全データを保存
+const saveDatabaseToJSON = (db) => {
+  localStorage.setItem("secure_todo_database_json", JSON.stringify(db));
 };
 
 function App() {
+  // 認証関連ステート
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [loginError, setLoginError] = useState("");
+  
+  // 認証情報変更フォームのステート
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changeMessage, setChangeMessage] = useState("");
+
+  // ToDo関連ステート
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
-  // ログイン状態になったらJSON（localStorage）からタスクを読み込む
-  useEffect(() => {
-    if (isLoggedIn) {
-      setTodos(loadTodosFromJSON());
+  // ログイン処理
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const db = loadDatabaseFromJSON();
+    
+    // JSON（localStorage）内の最新情報と照合
+    if (usernameInput === db.auth.username && passwordInput === db.auth.password) {
+      setLoggedIn(true);
+      setTodos(db.todos);
+      setLoginError("");
+    } else {
+      setLoginError("IDまたはパスワードが間違っています。");
     }
-  }, [isLoggedIn]);
-
-  // タスクが更新されたらJSON（localStorage）に自動で書き込む
-  const updateTodos = (newTodos) => {
-    setTodos(newTodos);
-    saveTodosToJSON(newTodos);
   };
 
-  const handleLogin = () => {
-    setLoggedIn(true);
-  };
-
+  // ログアウト処理
   const handleLogout = () => {
     setLoggedIn(false);
+    setUsernameInput("");
+    setPasswordInput("");
+    setTodos([]);
+    setChangeMessage("");
+    setNewUsername("");
+    setNewPassword("");
+  };
+
+  // 認証情報の変更処理
+  const handleChangeAuth = (e) => {
+    e.preventDefault();
+    if (!newUsername.trim() || !newPassword.trim()) return;
+
+    const db = loadDatabaseFromJSON();
+    // JSONの認証情報を上書き
+    db.auth.username = newUsername;
+    db.auth.password = newPassword;
+    saveDatabaseToJSON(db);
+
+    setChangeMessage("IDとパスワードを変更しました！次回から新しい情報でログインしてください。");
+    setNewUsername("");
+    setNewPassword("");
+  };
+
+  // タスク更新処理
+  const updateTodosInJSON = (newTodos) => {
+    setTodos(newTodos);
+    const db = loadDatabaseFromJSON();
+    db.todos = newTodos;
+    saveDatabaseToJSON(db);
   };
 
   const addTodo = () => {
     if (!inputValue.trim()) return;
     const newTodos = [...todos, { id: Date.now(), text: inputValue, completed: false }];
-    updateTodos(newTodos);
+    updateTodosInJSON(newTodos);
     setInputValue("");
   };
 
   const toggleTodo = (id) => {
     const newTodos = todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo);
-    updateTodos(newTodos);
+    updateTodosInJSON(newTodos);
   };
 
   const deleteTodo = (id) => {
     const newTodos = todos.filter(todo => todo.id !== id);
-    updateTodos(newTodos);
+    updateTodosInJSON(newTodos);
   };
 
   return (
@@ -59,15 +112,15 @@ function App() {
       <div className="content">
         {isLoggedIn ? (
           <div>
-            <h1 className="title">ログイン済みです</h1>
-            <button className="button" onClick={handleLogout}>
-              ログアウト
-            </button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h1 className="title">管理パネル</h1>
+              <button className="button" onClick={handleLogout}>ログアウト</button>
+            </div>
 
-            {/* ToDoリストのメイン機構 */}
+            {/* ToDoリスト */}
             <div className="todo-section" style={{ marginTop: "20px" }}>
-              <h2>ToDoリスト</h2>
-              <div style={{ display: "flex", gap: "8px", marginBottom: "16px", justifyContent: "center", alignItems: "center" }}>
+              <h2>共通ToDoリスト</h2>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
                 <input 
                   type="text" 
                   value={inputValue} 
@@ -91,13 +144,51 @@ function App() {
               </ul>
             </div>
 
+            {/* 認証情報変更フォーム */}
+            <div className="auth-change-section" style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #ccc" }}>
+              <h3>ログイン情報の変更</h3>
+              <form onSubmit={handleChangeAuth} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "300px" }}>
+                <input 
+                  type="text" 
+                  placeholder="新しいユーザーID" 
+                  value={newUsername} 
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  required
+                />
+                <input 
+                  type="password" 
+                  placeholder="新しいパスワード" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <button type="submit" className="button" style={{ backgroundColor: "#555" }}>設定を変更する</button>
+              </form>
+              {changeMessage && <p style={{ color: "green", fontSize: "14px" }}>{changeMessage}</p>}
+            </div>
+
           </div>
         ) : (
           <div>
-            <h1 className="title">ログインしてください</h1>
-            <button className="button" onClick={handleLogin}>
-              ログイン
-            </button>
+            <h1 className="title">サインイン</h1>
+            <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "300px", margin: "0 auto 15px" }}>
+              <input 
+                type="text" 
+                placeholder="ユーザーID" 
+                value={usernameInput} 
+                onChange={(e) => setUsernameInput(e.target.value)}
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="パスワード" 
+                value={passwordInput} 
+                onChange={(e) => setPasswordInput(e.target.value)}
+                required
+              />
+              <button type="submit" className="button">ログイン</button>
+            </form>
+            {loginError && <p style={{ color: "red", fontSize: "14px" }}>{loginError}</p>}
           </div>
         )}
         <span>isLoggedIn: {isLoggedIn.toString()}</span>
@@ -107,3 +198,4 @@ function App() {
 }
 
 export default App;
+
