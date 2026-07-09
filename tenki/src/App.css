@@ -1,3 +1,16 @@
+h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--text-h);
+  text-align: center;
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
