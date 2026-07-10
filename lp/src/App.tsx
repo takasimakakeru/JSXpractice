@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import "./App.css";
+// 1. 作成した Pricing コンポーネントをインポートする（パスはファイルの場所に合わせてね）
+import { Pricing } from './components/Pricing'; 
+
 function App() {
 	return (
 		<div className="all">
-		<title>AI要約紹介ページ
+		<title>AI要約紹介ページ</title>
 		<header className="App-header">
 			<h1>ロゴ</h1>
 			<ul>
@@ -29,14 +32,10 @@ function App() {
 					<li>多言語対応</li>
 				</ul>
 			</section>
-			<section className="pricing">
-				<h2>料金プラン</h2>
-				<ul>
-					<li>無料プラン: 月額0円</li>
-					<li>スタンダードプラン: 月額980円</li>
-					<li>プレミアムプラン: 月額1980円</li>
-				</ul>
-			</section>
+
+			{/* 2. 元の長い箇所の代わりに、これ1行に置き換える！ */}
+			<Pricing />
+
 			<section className="contact">
 				<h2>お問い合わせ</h2>
 				<form>
