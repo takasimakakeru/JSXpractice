@@ -1,0 +1,142 @@
+/* ==========================================
+   全体・共通のスタイル
+   ========================================== */
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f8fafc; /* 薄いグレーの背景で今っぽく */
+  color: #1e293b;
+}
+
+/* ==========================================
+   Header（ヘッダーを横並びに）
+   ========================================== */
+.App-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.App-header ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem; /* メニューの間隔 */
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================
+   Pricing（料金セクション）
+   ========================================== */
+.pricing {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+/* 月額/年額の切り替えトグル */
+.plan-toggle {
+  display: inline-flex;
+  background-color: #e2e8f0;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  margin-bottom: 3rem;
+}
+
+.plan-toggle button {
+  border: none;
+  background: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+/* 無効化（選択されている）されている方のボタンを白くする */
+.plan-toggle button:disabled {
+  background-color: #ffffff;
+  color: #2563eb; /* スタイリッシュな青 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* カードを横並びにする魔法の指定（Flexbox） */
+.price-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem; /* カード同士の隙間 */
+  flex-wrap: wrap; /* スマホ画面では自動で縦並びにする */
+}
+
+/* カード1枚ずつのデザイン */
+.price-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px; /* 角丸で柔らかい印象に */
+  padding: 2.5rem 2rem;
+  width: 280px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+/* マウスを乗せたらちょっと浮き上がらせる（実務で喜ばれる演出） */
+.price-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.price-card h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+.price .span {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.price-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0 0;
+  text-align: left; /* リストの中身は左寄せ */
+}
+
+.price-card li {
+  margin-bottom: 0.75rem;
+  color: #475569;
+}
+
+/* チェックマーク風のぽっちをつける */
+.price-card li::before {
+  content: "✓ ";
+  color: #2563eb;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+.original-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 18px;
+  border-radius: 10px;
+  width: 200px;
+  height: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  background-color: #1976d2;
+}
+
+.original-button:hover {
+  opacity: .7;
+}
+.hero {
+  
+}

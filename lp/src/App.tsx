@@ -15,14 +15,14 @@ function App() {
 				<li>料金</li>
 				<li>お問い合わせ</li>
 			</ul>
-			<button>無料で始める</button>
-			<button>ログイン</button>
+			<a href="" className="original-button">無料で始める</a>
+			<a href="" className="original-button">ログイン</a>
 		</header>
 		<main>
 			<section className="hero">
 				<h2>AI要約サービス</h2>
 				<p>AIを活用した要約サービスで、文章を簡単に要約できます。</p>
-				<button>無料で始める</button>
+				<a href="" className="original-button">無料で始める</a>
 			</section>
 			<section className="features">
 				<h2>特徴</h2>
