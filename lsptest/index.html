@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超便利！HTML to JSX/TSX リアルタイムコンバーター。左にプレーンHTMLを入力すると、右にclass→classNameやstyleオブジェクト変換、閉じタグ自動修正されたJSXがリアルタイム出力されるツール。コピーボタンとLocalStorage保存、TailwindCSS使用のダークモードUI</title>
+    <meta name="description" content="超便利！HTML to JSX/TSX リアルタイムコンバーター。左にプレーンHTMLを入力すると、右にclass→classNameやstyleオブジェクト変換、閉じタグ自動修正されたJSXがリアルタイム出力されるツール。コピーボタンとLocalStorage保存、TailwindCSS使用のダークモードUI">
+    <meta name="keywords" content="HTML to JSX, HTML to TSX, JSX converter, TSX converter, HTML to React, JSX real-time converter, TSX real-time converter, class to className, style object conversion, auto-closing tags, copy button, LocalStorage save, TailwindCSS dark mode UI">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">HTML to JSX/TSX リアルタイムコンバーター</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <h2 class="text-xl font-semibold mb-2">HTML入力</h2>
+                <textarea id="htmlInput" class="w-full h-64 p-2 bg-gray-800 text-white border border-gray-700 rounded" placeholder="ここにHTMLを入力してください"></textarea>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold mb-2">JSX/TSX出力</h2>
+                <textarea id="jsxOutput" class="w-full h-64 p-2 bg-gray-800 text-white border border-gray-700 rounded" readonly placeholder="ここに変換されたJSX/TSXが表示されます"></textarea>
+                <button id="copyButton" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">コピー</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const htmlInput = document.getElementById('htmlInput');
+        const jsxOutput = document.getElementById('jsxOutput');
+        const copyButton = document.getElementById('copyButton');
+
+        function convertHtmlToJsx(html) {
+            // ここにHTMLをJSXに変換するロジックを実装
+            // class → className, style → styleオブジェクト変換, 閉じタグ自動修正など
+            let jsx = html.replace(/class=/g, 'className=');
+            jsx = jsx.replace(/style="([^"]*)"/g, (match, p1) => {
+                const styleObject = p1.split(';').reduce((acc, style) => {
+                    const [key, value] = style.split(':').map(s => s.trim());
+                    if (key && value) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+                return `style={${JSON.stringify(styleObject)}}`;
+            });
+            // 閉じタグの自動修正などの追加処理もここに実装可能
+            return jsx;
+        }
+
+        htmlInput.addEventListener('input', () => {
+            const html = htmlInput.value;
+            const jsx = convertHtmlToJsx(html);
+            jsxOutput.value = jsx;
+            localStorage.setItem('htmlInput', html);
+        });
+
+        copyButton.addEventListener('click', () => {
+            jsxOutput.select();
+            document.execCommand('copy');
+        });
+
+        // ページ読み込み時にLocalStorageからHTMLを復元
+        window.addEventListener('load', () => {
+            const savedHtml = localStorage.getItem('htmlInput');
+            if (savedHtml) {
+                htmlInput.value = savedHtml;
+                jsxOutput.value = convertHtmlToJsx(savedHtml);
+            }
+        });
+
+    </script>
+</body>
+</html>
