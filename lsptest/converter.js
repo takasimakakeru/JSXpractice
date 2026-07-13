@@ -26,5 +26,28 @@ function convertHtmlToJsx(html) {
       }
     });
     // ここで改行して Tab キーを連打してみてください！戻り値をJSON形式で出力させるはずです
+    return `style={${JSON.stringify(styles)}}`;
+  });
+
+  // 4. コメントの変換
+  jsx = jsx.replace(/<!--(.*?)-->/g, '{/*$1*/}');
+
+  // 5. 属性値のクォートを統一（シングルクォートに変換）
+  jsx = jsx.replace(/"([^"]*)"/g, "'$1'");
+
+  return jsx;
+}
+
+// 使用例
+const htmlInput = `
+<div class="container" style="background-color: red; color: white;">
+  <label for="name">Name:</label>
+  <input type="text" id="name" />
+  <img src="image.png" />
+</div>
+`;
+
+const jsxOutput = convertHtmlToJsx(htmlInput);
+console.log(jsxOutput);
     
 
