@@ -6,27 +6,26 @@ function convertHtmlToJsx(html) {
 
   let jsx = html;
 
-  // 1. class と for の変換
-  jsx = jsx.replace(/class=/g, 'className=');
-  jsx = jsx.replace(/for=/g, 'htmlFor=');
+  // 1. class と for の変換（コメントに惑わされないように、スペースを含めて厳密に置換する）
+  jsx = jsx.replace(/ class=/g, ' className=');
+  jsx = jsx.replace(/ for=/g, ' htmlFor=');
 
   // 2. 閉じタグ（img, input, br）の自動修正
-  jsx = jsx.replace(/<(img|input|br)([^>]*)(?<!\/)>/g, '<$1$2 />');
+  // ヒント：複雑な正規表現はやめて、単純に ">" を " />" に置換してから " / />" になっちゃったやつを戻す力技にする
+  jsx = jsx.replace(/<(\s*(img|input|br)[^>]*?)>/g, '<$1 />');
 
-  // 3. style属性のパース（ここが難しいのでLSPに任せる）
-  // ヒント：style="background-color: red;" を style={{backgroundColor: "red"}} にする
-  jsx = jsx.replace(/style="([^"]*)"/g, (match, styleStr) => {
-    const styles = {};
-    styleStr.split(';').forEach(style => {
-      const [key, value] = style.split(':');
-      if (key && value) {
-        // ハイフンをキャメルケースに変換（例: background-color -> backgroundColor）
-        const camelKey = key.trim().replace(/-([a-z])/g, g => g[1].toUpperCase());
-        styles[camelKey] = value.trim();
+  // 3. style属性の変換（CSS文字列をJSXオブジェクトに変換）
+  jsx = jsx.replace(/style="([^"]*)"/g, (match, cssString) => {
+    const styleObject = {};
+    cssString.split(';').forEach((rule) => {
+      const [property, value] = rule.split(':').map(s => s.trim());
+      if (property && value) {
+        // CSSプロパティをキャメルケースに変換
+        const camelCaseProperty = property.replace(/-([a-z])/g, (m, p1) => p1.toUpperCase());
+        styleObject[camelCaseProperty] = value;
       }
     });
-    // ここで改行して Tab キーを連打してみてください！戻り値をJSON形式で出力させるはずです
-    return `style={${JSON.stringify(styles)}}`;
+    return `style={${JSON.stringify(styleObject)}}`;
   });
 
   // 4. コメントの変換
@@ -49,5 +48,3 @@ const htmlInput = `
 
 const jsxOutput = convertHtmlToJsx(htmlInput);
 console.log(jsxOutput);
-    
-
